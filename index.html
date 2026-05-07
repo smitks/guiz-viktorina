@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Викторина: Основы веб-разработки</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="quiz-container">
+        <header class="quiz-header">
+            <h1>🧠 Интерактивная викторина</h1>
+            <p>Проверь свои знания по HTML, CSS и JavaScript</p>
+        </header>
+
+        <main class="quiz-main">
+            <div id="quiz-area">
+                <!-- Вопросы и варианты подставляются из JS -->
+            </div>
+            <div id="result-area" class="result-area hidden">
+                <h2>📊 Ваш результат</h2>
+                <div class="score-circle">
+                    <span id="score-percent">0</span><span>%</span>
+                </div>
+                <p id="score-message"></p>
+                <button id="restart-btn" class="restart-btn">🔄 Пройти заново</button>
+            </div>
+        </main>
+
+        <footer class="quiz-footer">
+            <p>Викторина из 10 вопросов | Разработка веб-приложения</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
