@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Викторина по веб-технологиям</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧠 Интерактивная викторина</h1>
+            <p>Проверь свои знания HTML, CSS и JavaScript</p>
+        </header>
+
+        <!-- Блок викторины (вопросы) -->
+        <div class="quiz-container" id="quizContainer">
+            <div class="question-header">
+                <span id="questionCounter">Вопрос 1 из 10</span>
+                <span id="bestScore">🏆 Лучший: --</span>
+            </div>
+            <div class="question-text" id="questionText">Загрузка...</div>
+            <div class="options" id="optionsContainer"></div>
+            <button id="nextBtn" class="next-btn" disabled>Далее →</button>
+        </div>
+
+        <!-- Блок результата (изначально скрыт) -->
+        <div class="result-container hidden" id="resultContainer">
+            <h2>🎉 Результат теста</h2>
+            <p class="score-display">Вы набрали <span id="score">0</span> из <span id="total">0</span></p>
+            <p id="resultMessage"></p>
+            <button id="restartBtn" class="restart-btn">Пройти снова 🔄</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

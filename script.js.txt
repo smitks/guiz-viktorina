@@ -1,0 +1,192 @@
+// ==================== ВОПРОСЫ ====================
+const questions = [
+    {
+        text: "Что означает аббревиатура HTML?",
+        options: [
+            "Hyper Text Markup Language",
+            "Home Tool Markup Language",
+            "Hyperlinks and Text Markup Language",
+            "High-Level Text Management Language"
+        ],
+        correct: 0
+    },
+    {
+        text: "Какой тег используется для создания ссылки?",
+        options: ["<a>", "<link>", "<href>", "<url>"],
+        correct: 0
+    },
+    {
+        text: "Какое CSS-свойство изменяет цвет текста?",
+        options: ["text-color", "color", "font-color", "background-color"],
+        correct: 1
+    },
+    {
+        text: "Как объявить переменную в JavaScript с блочной областью видимости?",
+        options: ["var", "let", "const", "let и const"],
+        correct: 3
+    },
+    {
+        text: "Какой метод массива добавляет элемент в конец?",
+        options: ["push()", "pop()", "unshift()", "append()"],
+        correct: 0
+    },
+    {
+        text: "Что выведет console.log(typeof null)?",
+        options: ["null", "undefined", "object", "number"],
+        correct: 2
+    },
+    {
+        text: "Какой селектор выбирает элемент с id='header'?",
+        options: [".header", "#header", "header", "*header"],
+        correct: 1
+    },
+    {
+        text: "Какое свойство делает контейнер гибким (Flexbox)?",
+        options: ["display: flex", "display: block", "flex-container", "position: flex"],
+        correct: 0
+    },
+    {
+        text: "Какой тег используется для подключения JavaScript в HTML?",
+        options: ["<js>", "<javascript>", "<script>", "<code>"],
+        correct: 2
+    },
+    {
+        text: "Что такое семантическая вёрстка?",
+        options: [
+            "Использование тегов, описывающих содержание (header, article)",
+            "Код, который быстрее загружается",
+            "Вёрстка без CSS",
+            "Использование только div и span"
+        ],
+        correct: 0
+    }
+];
+
+// ==================== ПЕРЕМЕННЫЕ СОСТОЯНИЯ ====================
+let currentIndex = 0;
+let userAnswers = new Array(questions.length).fill(null);
+let quizFinished = false;
+
+let bestScore = localStorage.getItem('quizBestScore');
+if (bestScore !== null) bestScore = parseInt(bestScore);
+else bestScore = null;
+
+// ==================== DOM ЭЛЕМЕНТЫ ====================
+const quizContainer = document.getElementById('quizContainer');
+const resultContainer = document.getElementById('resultContainer');
+const questionText = document.getElementById('questionText');
+const optionsContainer = document.getElementById('optionsContainer');
+const nextBtn = document.getElementById('nextBtn');
+const questionCounterSpan = document.getElementById('questionCounter');
+const bestScoreSpan = document.getElementById('bestScore');
+const scoreSpan = document.getElementById('score');
+const totalSpan = document.getElementById('total');
+const resultMessageSpan = document.getElementById('resultMessage');
+const restartBtn = document.getElementById('restartBtn');
+
+// ==================== ФУНКЦИИ ====================
+function updateBestScoreUI() {
+    if (bestScore !== null) {
+        bestScoreSpan.innerText = `🏆 Лучший: ${bestScore}/${questions.length}`;
+    } else {
+        bestScoreSpan.innerText = `🏆 Лучший: --`;
+    }
+}
+
+function saveBestScoreIfNeeded(score) {
+    if (bestScore === null || score > bestScore) {
+        bestScore = score;
+        localStorage.setItem('quizBestScore', bestScore);
+        updateBestScoreUI();
+    }
+}
+
+function renderCurrentQuestion() {
+    if (quizFinished) return;
+    const q = questions[currentIndex];
+    questionText.innerText = q.text;
+    questionCounterSpan.innerText = `Вопрос ${currentIndex+1} из ${questions.length}`;
+
+    optionsContainer.innerHTML = '';
+    q.options.forEach((opt, idx) => {
+        const optDiv = document.createElement('div');
+        optDiv.classList.add('option');
+        
+        if (userAnswers[currentIndex] !== null) {
+            optDiv.classList.add('disabled-option');
+            if (userAnswers[currentIndex] === idx) optDiv.classList.add('selected');
+        } else {
+            optDiv.addEventListener('click', () => selectAnswer(idx));
+        }
+        
+        const prefix = String.fromCharCode(65 + idx);
+        optDiv.innerHTML = `<span style="font-weight:bold">${prefix}.</span> ${opt}`;
+        optionsContainer.appendChild(optDiv);
+    });
+    
+    nextBtn.disabled = (userAnswers[currentIndex] === null);
+}
+
+function selectAnswer(selectedIdx) {
+    if (quizFinished) return;
+    if (userAnswers[currentIndex] !== null) return;
+    
+    userAnswers[currentIndex] = selectedIdx;
+    renderCurrentQuestion();
+}
+
+function nextQuestion() {
+    if (nextBtn.disabled) return;
+    
+    if (currentIndex + 1 < questions.length) {
+        currentIndex++;
+        renderCurrentQuestion();
+    } else {
+        finishQuiz();
+    }
+}
+
+function finishQuiz() {
+    quizFinished = true;
+    
+    let correctCount = 0;
+    for (let i = 0; i < questions.length; i++) {
+        if (userAnswers[i] === questions[i].correct) correctCount++;
+    }
+    
+    saveBestScoreIfNeeded(correctCount);
+    
+    scoreSpan.innerText = correctCount;
+    totalSpan.innerText = questions.length;
+    
+    let msg = '';
+    if (correctCount === questions.length) msg = '🌟 Превосходно! Вы настоящий эксперт!';
+    else if (correctCount >= 8) msg = '👍 Очень хорошо! Почти идеально.';
+    else if (correctCount >= 5) msg = '📚 Неплохо, но стоит повторить теорию.';
+    else msg = '💪 Попробуйте ещё раз – веб-технологии ждут вас!';
+    resultMessageSpan.innerText = msg;
+    
+    quizContainer.classList.add('hidden');
+    resultContainer.classList.remove('hidden');
+}
+
+function restartQuiz() {
+    currentIndex = 0;
+    userAnswers.fill(null);
+    quizFinished = false;
+    
+    resultContainer.classList.add('hidden');
+    quizContainer.classList.remove('hidden');
+    
+    renderCurrentQuestion();
+}
+
+function init() {
+    updateBestScoreUI();
+    renderCurrentQuestion();
+    nextBtn.addEventListener('click', nextQuestion);
+    restartBtn.addEventListener('click', restartQuiz);
+}
+
+// Запуск
+init();
